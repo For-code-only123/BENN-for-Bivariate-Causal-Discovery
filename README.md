@@ -61,7 +61,7 @@ The real-world datasets used in our experiments are sourced from the [CMU-PHIL E
 **Baselines**
 We selected three causal discovery algorithms for comparison. The open-source code links are as follows:
 
-* **DRCD:** [GitHub Repository](https://github.com/causal111/DRCD)
+* **DRCD (available for mixed-type pairs only):** [GitHub Repository](https://github.com/causal111/DRCD)
 * **LiM:** [Source Code](https://github.com/cdt15/lingam/blob/master/lingam/lim.py)
 * **MERIT:** [GitHub Repository](https://github.com/STAN-UAntwerp/MERIT)
 
