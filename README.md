@@ -69,7 +69,7 @@ We selected three causal discovery algorithms for comparison. The open-source co
 
 ### 7. Engineering Optimizations for Baselines
 
-To ensure the baseline algorithms run stably on complex real-world datasets and produce results within a reasonable timeframe, we implemented necessary engineering optimizations for LiM and MERIT.
+To ensure the baseline algorithms run stably on complex real-world datasets and produce results within a reasonable timeframe, we implemented necessary engineering optimizations for LiM and MERIT. Given that the complete baseline methods comprise numerous associated files, we provide only the core code files we have specifically modified here. For the remaining unmodified code and the full project structure, please refer to our provided source code repository.
 
 #### 7.1 Optimizing LiM: Solving Combinatorial Explosion in Local Search
 
