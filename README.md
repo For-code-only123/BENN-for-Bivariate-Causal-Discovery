@@ -79,7 +79,7 @@ To ensure the baseline algorithms run stably on complex real-world datasets and 
 
 * **Complete Execution for Sparse Graphs**: If the initial graph generates 25 edges or fewer (as seen in the `abalone` dataset), the algorithm performs its complete, exact local search without any truncation.
 * **Truncation for Dense Graphs**: If the edge count exceeds 25, computing all combinations is physically impossible for a standard machine. In these cases, the following strict engineering strategies are automatically triggered:
-* **Limit continuous optimization iterations**: We set `max_iter = 2000` to force an early exit from the first-stage fine-tuning, ensuring the rapid output of an initial baseline graph.
+** **Limit continuous optimization iterations**: We set `max_iter = 2000` to force an early exit from the first-stage fine-tuning, ensuring the rapid output of an initial baseline graph.
 * **Generator iteration and ten-million-level truncation**: We discarded the dangerous approach of loading all flip combinations into memory. Instead, we switched to on-demand generation using `itertools.islice`. By setting a search cap of `max_flip_candidates = 10000000`, we keep the memory footprint strictly at  and forcefully terminate the search once the limit is reached.
 * **Fallback protection mechanism**: If the truncated local search deviates significantly from the initial solution, the algorithm triggers a fallback mechanism. It re-performs pruning around the initial baseline graph to maximize the quality of the sub-optimal solution within computational limits.
 
