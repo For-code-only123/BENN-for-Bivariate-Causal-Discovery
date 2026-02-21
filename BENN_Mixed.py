@@ -23,7 +23,7 @@ def delta_kernel(x1, x2=None):
     x2 = x1 if x2 is None else np.asarray(x2).ravel()
     return (x1[:, None] == x2[None, :]).astype(float)
 
-def hsic_test(K, L, n_perm=800, seed=None):
+def hsic_test(K, L, n_perm=1000, seed=None):
     rng = np.random.RandomState(seed)
     n = K.shape[0]
     H = np.eye(n) - np.ones((n, n)) / n
@@ -516,6 +516,7 @@ def direction_belt_1d(
             "decision": decision_rf
         }
     }
+
 
 
 
