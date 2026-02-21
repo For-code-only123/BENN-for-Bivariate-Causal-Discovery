@@ -1,9 +1,5 @@
 # A-Unified-BENN-Framework-for-Bivariate-Causal-Discovery-with-Continuous-Discrete-and-Mixed-Variables
 
-Here is the complete English version in Markdown format. You can copy and paste this directly into your `README.md` file.
-
----
-
 ## 🚀 Running Real-World Experiments
 
 To reproduce our experiments on real-world datasets, please refer to the following instructions regarding data preprocessing, dataset-specific rules, and environment configuration. The main execution script is `real-experiments.py`.
@@ -56,7 +52,3 @@ You might notice that we did not split the underlying functions into numerous gr
 
 * **Out-of-the-box Readability:** We aim to provide "standalone" code with maximum readability. Readers can understand the entire forward pass and loss computation logic within a single file, without having to jump back and forth between multiple directories and modules.
 * **Lower Learning Curve:** The kernel function calculations and layer designs differ depending on the data type (continuous vs. discrete). Encapsulating them in their respective independent files allows researchers to focus entirely on the inference logic for a specific data type, making it incredibly easy to extract, modify, or integrate into your own projects.
-
----
-
-Would you like me to draft a `requirements.txt` section to go along with this, or help you write the Introduction/Abstract section of the README?
