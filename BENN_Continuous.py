@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 
-# ----------------
 
 def rbf_kernel(X, Y=None, sigma=None):
     X = np.asarray(X, dtype=float)
@@ -410,5 +409,6 @@ def direction_belt_1d(
             "decision": decision_rf
         }
     }
+
 
 
