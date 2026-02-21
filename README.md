@@ -88,4 +88,4 @@ To ensure the baseline algorithms run stably on complex real-world datasets and 
 **The Solution**: Consistent with the optimization logic of our main framework code, we dynamically adjust the testing strategy based on the sample size:
 
 * **Sample size > 1000**: We use a Gamma distribution approximation to estimate the p-value, replacing the highly time-consuming permutation test. This significantly boosts computation speed.
-* **Sample size  1000**: We retain the rigorous standard testing process, executing 1000 permutation test loops.
+* **Otherwise**: We retain the rigorous standard testing process, executing 1000 permutation test loops.
