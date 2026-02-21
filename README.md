@@ -52,39 +52,3 @@ You might notice that we did not split the underlying functions into numerous gr
 
 * **Out-of-the-box Readability:** We aim to provide "standalone" code with maximum readability. Readers can understand the entire forward pass and loss computation logic within a single file, without having to jump back and forth between multiple directories and modules.
 * **Lower Learning Curve:** The kernel function calculations and layer designs differ depending on the data type (continuous vs. discrete). Encapsulating them in their respective independent files allows researchers to focus entirely on the inference logic for a specific data type, making it incredibly easy to extract, modify, or integrate into your own projects.
-
-### 6. Datasets and Baselines
-
-**Dataset Source**
-The real-world datasets used in our experiments are sourced from the [CMU-PHIL Example Causal Datasets](https://github.com/cmu-phil/example-causal-datasets).
-
-**Baselines**
-We selected three causal discovery algorithms for comparison. The open-source code links are as follows:
-
-* **DRCD (available for mixed-type pairs only):** [GitHub Repository](https://github.com/causal111/DRCD)
-* **LiM:** [Source Code](https://github.com/cdt15/lingam/blob/master/lingam/lim.py)
-* **MERIT:** [GitHub Repository](https://github.com/STAN-UAntwerp/MERIT)
-
----
-
-### 7. Engineering Optimizations for Baselines
-
-To ensure the baseline algorithms run stably on complex real-world datasets and produce results within a reasonable timeframe, we implemented necessary engineering optimizations for LiM and MERIT.
-
-#### 7.1 Optimizing LiM: Solving Combinatorial Explosion in Local Search
-
-**The Problem**: When processing datasets with numerous nodes or strong correlations, LiM tends to generate a dense initial graph. This causes an exponential () combinatorial explosion during the local search phase when attempting to reverse edges. Without intervention, this mathematically inevitable explosion easily leads to Out-Of-Memory (OOM) errors or prolonged program freezing.
-
-**The Solution**: To ensure the algorithm's usability and prevent memory crashes, we introduced a hard safety threshold of **25 edges**. If the initial graph generates 25 edges or fewer (as seen in the `abalone` dataset), the algorithm performs its complete, exact local search without any truncation. If the edge count exceeds 25, computing all combinations is physically impossible for a standard machine. In these cases, the following strict engineering strategies are automatically triggered:
-* **Limit continuous optimization iterations**: We set `max_iter = 2000` to force an early exit from the first-stage fine-tuning, ensuring the rapid output of an initial baseline graph.
-* **Generator iteration and ten-million-level truncation**: We discarded the dangerous approach of loading all flip combinations into memory. Instead, we switched to on-demand generation using `itertools.islice`. By setting a search cap of `max_flip_candidates = 10000000`, we keep the memory footprint strictly at  and forcefully terminate the search once the limit is reached.
-* **Fallback protection mechanism**: If the truncated local search deviates significantly from the initial solution, the algorithm triggers a fallback mechanism. It re-performs pruning around the initial baseline graph to maximize the quality of the sub-optimal solution within computational limits.
-
-#### 7.2 Optimizing MERIT: Reducing Time Overhead of Large-Sample Independence Tests
-
-**The Problem**: MERIT frequently calls kernel-based independence tests. For large datasets like `abalone` (>4000 samples), the default permutation testing approach is excessively time-consuming and highly inefficient.
-
-**The Solution**: Consistent with the optimization logic of our main framework code, we dynamically adjust the testing strategy based on the sample size:
-
-* **Sample size > 1000**: We use a Gamma distribution approximation to estimate the p-value, replacing the highly time-consuming permutation test. This significantly boosts computation speed.
-* **Otherwise**: We retain the rigorous standard testing process, executing 1000 permutation test loops.
