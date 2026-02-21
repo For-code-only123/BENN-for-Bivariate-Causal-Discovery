@@ -1,6 +1,6 @@
 # A-Unified-BENN-Framework-for-Bivariate-Causal-Discovery-with-Continuous-Discrete-and-Mixed-Variables
 
-## 🚀 Running Real-World Experiments
+## 🚀 Running Real-World Experiments (Bivariate Pairwise Evaluation)
 
 To reproduce our experiments on real-world datasets, please refer to the following instructions regarding data preprocessing, dataset-specific rules, and environment configuration. The main execution script is `real-experiments.py`.
 
