@@ -69,16 +69,18 @@ We selected three causal discovery algorithms for comparison. The open-source co
 
 ### 7. Engineering Optimizations for Baselines
 
-To ensure the baseline algorithms run stably on complex real-world datasets and produce results within a reasonable timeframe, we implemented necessary engineering optimizations for LiM and MERIT. Given that the complete baseline methods comprise numerous associated files, we provide only the core code files we have specifically modified here. For the remaining unmodified code and the full project structure, please refer to our provided source code repository.
+To ensure the baseline algorithms run stably on complex real-world datasets and produce results within a reasonable timeframe, we implemented necessary engineering optimizations for LiM and MERIT. 
 
-#### 7.1 Optimizing LiM: Solving Combinatorial Explosion in Local Search
+#### 7.1 Optimizing LiM: Solving Combinatorial Explosion via Dynamic Parameter Tuning
 
-**The Problem**: When processing datasets with numerous nodes or strong correlations, LiM tends to generate a dense initial graph. This causes an exponential () combinatorial explosion during the local search phase when attempting to reverse edges. Without intervention, this mathematically inevitable explosion easily leads to Out-Of-Memory (OOM) errors or prolonged program freezing.
+**The Problem**: When processing datasets with numerous nodes or strong correlations, the LiM algorithm frequently generates a dense initial graph. This density triggers a severe exponential combinatorial explosion during the subsequent local search phase, where the algorithm attempts to evaluate all possible edge reversals. Because the number of flip combinations grows exponentially with the number of edges, executing a complete local search on dense graphs becomes computationally infeasible, inevitably leading to Out-Of-Memory (OOM) errors or unacceptable execution times.
 
-**The Solution**: To ensure the algorithm's usability and prevent memory crashes, we introduced a hard safety threshold of **25 edges**. If the initial graph generates 25 edges or fewer (as seen in the `abalone` dataset), the algorithm performs its complete, exact local search without any truncation. If the edge count exceeds 25, computing all combinations is physically impossible for a standard machine. In these cases, the following strict engineering strategies are automatically triggered:
-* **Limit continuous optimization iterations**: We set `max_iter = 2000` to force an early exit from the first-stage fine-tuning, ensuring the rapid output of an initial baseline graph.
-* **Generator iteration and ten-million-level truncation**: We discarded the dangerous approach of loading all flip combinations into memory. Instead, we switched to on-demand generation using `itertools.islice`. By setting a search cap of `max_flip_candidates = 10000000`, we keep the memory footprint strictly at  and forcefully terminate the search once the limit is reached.
-* **Fallback protection mechanism**: If the truncated local search deviates significantly from the initial solution, the algorithm triggers a fallback mechanism. It re-performs pruning around the initial baseline graph to maximize the quality of the sub-optimal solution within computational limits.
+**The Solution**: Rather than extensively modifying the underlying search mechanics, we introduced a dynamic execution threshold tied directly to LiM's native `only_global` parameter. Based on computational estimations, completing the exhaustive local search for a graph containing approximately 20 edges requires nearly 6 hours on standard computing resources. To keep the computational load within scientifically rigorous and practical limits, we dynamically adjust the algorithm's execution path based on the edge count generated in the initial phase:
+
+* **Exact Local Search ($\leq$ 20 edges):** If the initial global phase yields 20 edges or fewer, the computational cost is deemed manageable. The algorithm proceeds with LiM's standard logic, executing an exhaustive local search without any truncation to perfectly refine the graph structure.
+* **Global-Only Extraction (> 20 edges):** If the initial edge count exceeds the 20-edge hard threshold, calculating all flip combinations exceeds standard hardware capabilities. In these instances, the program automatically sets the `only_global` parameter to `True`. This mechanism safely bypasses the combinatorial local search phase, outputting the global optimal solution derived from the first stage and effectively eliminating the risk of memory crashes.
+
+This conditional parameter tuning ensures the algorithm remains robust and highly efficient across varying dataset complexities while maximizing the structural integrity of the original LiM framework.
 
 #### 7.2 Optimizing MERIT: Reducing Time Overhead of Large-Sample Independence Tests
 
